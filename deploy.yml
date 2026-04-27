@@ -28,11 +28,7 @@ jobs:
     # 2. ECR 로그인
     - name: Login to Amazon ECR
       id: login-ecr
-<<<<<<< HEAD
       uses: aws-actions/amazon-ecr-login@v1
-=======
-      uses: aws-actions/amazon-ecr-login@v2
->>>>>>> 589f126d18d81819dc3ab887b951e2d1b18474dc
 
     # 3. Docker 이미지 빌드 및 ECR 푸시 (Dockerfile 이용)
     - name: Build, tag, and push image to Amazon ECR
