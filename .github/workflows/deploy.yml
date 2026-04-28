@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: aws-lab-frontend # [주의] ECR에 이 이름으로 리포지토리를 미리 만들어야 합니다.
-  REACT_APP_API_BASE_URL: "http://3.148.151.144:8080"
+  REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
 
 jobs:
   deploy:
