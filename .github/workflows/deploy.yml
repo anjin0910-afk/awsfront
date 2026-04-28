@@ -50,11 +50,19 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         envs: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION
         script: |
-          aws ecr get-login-password --region us-east-2 | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+          # Fail immediately on error
+          set -e
           
-          # 기존 컨테이너 중지 및 삭제
-          sudo docker stop frontend-app || true
-          sudo docker rm frontend-app || true
+          # ECR 로그인 (오류 시 무한루프 방지)
+          PASSWORD=$(aws ecr get-login-password --region us-east-2)
+          if [ -z "$PASSWORD" ]; then
+            echo "ECR Login Failed! No password generated."
+            exit 1
+          fi
+          echo "$PASSWORD" | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+          
+          # 기존 컨테이너 강제 종료 및 삭제 (stop에서 행(Hang) 걸리는 것 방지)
+          sudo docker rm -f frontend-app || true
           
           # 새 이미지 Pull 및 실행 (80포트로 서비스)
           sudo docker pull ${{ steps.login-ecr.outputs.registry }}/aws-lab-frontend:latest
