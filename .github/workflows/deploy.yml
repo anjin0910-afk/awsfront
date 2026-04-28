@@ -7,6 +7,7 @@ on:
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: aws-lab-frontend # [주의] ECR에 이 이름으로 리포지토리를 미리 만들어야 합니다.
+  REACT_APP_API_BASE_URL: "http://3.148.151.144:8080"
 
 jobs:
   deploy:
@@ -28,7 +29,7 @@ jobs:
     # 2. ECR 로그인
     - name: Login to Amazon ECR
       id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      uses: aws-actions/amazon-ecr-login@v2
 
     # 3. Docker 이미지 빌드 및 ECR 푸시 (Dockerfile 이용)
     - name: Build, tag, and push image to Amazon ECR
@@ -37,7 +38,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: latest
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker build --build-arg VITE_API_BASE_URL=${{ env.REACT_APP_API_BASE_URL }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 

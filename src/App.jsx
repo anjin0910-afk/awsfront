@@ -8,7 +8,7 @@ function App() {
   const [file, setFile] = useState(null);
   const [uploadedFileName, setUploadedFileName] = useState(null);
 
-  const albAddress = process.env.REACT_APP_ALB_ADDRESS || "http://3.148.151.144:8080";
+  const albAddress = import.meta.env.VITE_API_BASE_URL || "http://3.148.151.144:8080";
 
   const callBackend = async () => {
     setMessage('호출 중...');
